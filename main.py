@@ -6,6 +6,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.openapi.utils import get_openapi
+from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings
 from database import Base, engine
@@ -33,6 +34,13 @@ app = FastAPI(
     openapi_tags=tags_metadata,
     contact={"name": "Backend Developer Assignment"},
     license_info={"name": "MIT"},
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[settings.FRONTEND_URL],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

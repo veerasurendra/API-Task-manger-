@@ -17,19 +17,19 @@ A simple backend REST API for managing tasks, built with **FastAPI**, **SQLAlche
 
 ```
 task_manager/
-├── app/
-│   ├── main.py                 # App entrypoint, Swagger/OpenAPI config, startup
-│   ├── config.py               # Settings loaded from .env (pydantic-settings)
-│   ├── database.py             # SQLAlchemy engine/session setup
-│   ├── models/                 # Model layer (SQLAlchemy ORM)
-│   │   └── task.py
-│   ├── schemas/                # Pydantic schemas (request/response "view" shape)
-│   │   └── task.py
-│   ├── services/                # Data-access layer (DB queries)
-│   │   └── task_service.py
-│   ├── controllers/            # Business logic layer (used by routes)
-│   │   └── task_controller.py
-│   └── routes/                  # HTTP routing layer (thin, delegates to controllers)
+
+├── main.py                 # App entrypoint, Swagger/OpenAPI config, startup
+├── config.py               # Settings loaded from .env (pydantic-settings)
+├── database.py             # SQLAlchemy engine/session setup
+├── models/                 # Model layer (SQLAlchemy ORM)
+│   └── task.py
+├── schemas/                # Pydantic schemas (request/response "view" shape)
+│   └── task.py
+├── services/                # Data-access layer (DB queries)
+│   └── task_service.py
+├── controllers/            # Business logic layer (used by routes)
+│      └── task_controller.py
+│└── routes/                  # HTTP routing layer (thin, delegates to controllers)
 │       └── task_routes.py
 ├── data/                        # SQLite DB file lives here (created at runtime)
 ├── requirements.txt
@@ -68,6 +68,8 @@ task_manager/
 3. **Install dependencies**
    ```bash
    pip install -r requirements.txt
+        (OR)
+   python -m pip install -r requirements.txt
    ```
 
 4. **Set up environment variables**
@@ -78,7 +80,7 @@ task_manager/
 
 5. **Run the application**
    ```bash
-   uvicorn app.main:app --reload
+   uvicorn main:app --reload
    ```
 
 6. **Open Swagger UI**

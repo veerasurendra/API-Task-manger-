@@ -6,15 +6,25 @@ the API's public "shape" never leaks internal DB details by accident.
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 
-from models.task import TaskStatus
+from app.models.task import TaskPriority, TaskStatus
 
 
 class TaskBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=200, description="Title of the task")
     description: Optional[str] = Field(None, max_length=2000, description="Detailed description")
-    status: TaskStatus = Field(default=TaskStatus.PENDING, description="Pending or Completed")
+    assigned_user_id: Optional[int] = None
+    priority: TaskPriority = TaskPriority.MEDIUM
+    status: TaskStatus = TaskStatus.TODO
+    due_date: Optional[datetime] = None
+
+    @field_validator("status", mode="before")
+    @classmethod
+    def normalize_status(cls, value):
+        if value == "Pending":
+            return TaskStatus.TODO
+        return value
 
 
 class TaskCreate(TaskBase):
@@ -24,7 +34,9 @@ class TaskCreate(TaskBase):
             "example": {
                 "title": "Write project README",
                 "description": "Document setup steps and API usage",
-                "status": "Pending",
+                "assigned_user_id": 1,
+                "priority": "high",
+                "status": "todo",
             }
         }
     )
@@ -34,19 +46,31 @@ class TaskUpdate(BaseModel):
     """Payload for updating a task. All fields optional (partial update)."""
     title: Optional[str] = Field(None, min_length=1, max_length=200)
     description: Optional[str] = Field(None, max_length=2000)
+    assigned_user_id: Optional[int] = None
+    priority: Optional[TaskPriority] = None
     status: Optional[TaskStatus] = None
+    due_date: Optional[datetime] = None
+
+    @field_validator("status", mode="before")
+    @classmethod
+    def normalize_status(cls, value):
+        if value == "Pending":
+            return TaskStatus.TODO
+        return value
 
     model_config = ConfigDict(
         json_schema_extra={
-            "example": {"status": "Completed"}
+            "example": {"status": "in_progress"}
         }
     )
 
 
 class TaskResponse(TaskBase):
     id: int
+    created_by_id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -61,3 +85,15 @@ class PaginatedTaskResponse(BaseModel):
 
 class MessageResponse(BaseModel):
     message: str
+
+
+class TaskAssign(BaseModel):
+    assigned_user_id: int
+
+
+class TaskStatusUpdate(BaseModel):
+    status: TaskStatus
+
+
+class TaskPriorityUpdate(BaseModel):
+    priority: TaskPriority

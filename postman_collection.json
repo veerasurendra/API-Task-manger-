@@ -1,0 +1,121 @@
+{
+  "info": {
+    "name": "Task Management System API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "token", "value": "" },
+    { "key": "task_id", "value": "1" },
+    { "key": "user_id", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Auth Register",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\":\"Admin User\",\"email\":\"admin@example.com\",\"password\":\"secret123\",\"role\":\"admin\"}"
+        }
+      }
+    },
+    {
+      "name": "Auth Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"admin@example.com\",\"password\":\"secret123\"}"
+        }
+      }
+    },
+    {
+      "name": "Profile",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{base_url}}/auth/profile"
+      }
+    },
+    {
+      "name": "Create Task",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/tasks",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"title\":\"Payment follow-up\",\"description\":\"Call finance team\",\"assigned_user_id\":{{user_id}},\"priority\":\"high\",\"status\":\"todo\"}"
+        }
+      }
+    },
+    {
+      "name": "List Tasks",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{base_url}}/tasks?page=1&page_size=20&priority=high&search=payment"
+      }
+    },
+    {
+      "name": "Assign Task",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/tasks/{{task_id}}/assign",
+        "body": { "mode": "raw", "raw": "{\"assigned_user_id\":{{user_id}}}" }
+      }
+    },
+    {
+      "name": "Change Status",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/tasks/{{task_id}}/status",
+        "body": { "mode": "raw", "raw": "{\"status\":\"in_progress\"}" }
+      }
+    },
+    {
+      "name": "Add Comment",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/tasks/{{task_id}}/comments",
+        "body": { "mode": "raw", "raw": "{\"content\":\"Started work.\"}" }
+      }
+    },
+    {
+      "name": "Admin Dashboard",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{base_url}}/dashboard/admin"
+      }
+    },
+    {
+      "name": "Audit Logs",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{base_url}}/audit-logs"
+      }
+    }
+  ]
+}
